@@ -359,23 +359,19 @@ namespace SistemaBiblioteca1
         {
             try
             {
-                // 1. Instanciar el objeto Usuario
                 Usuario usuario = new Usuario();
 
-                // 2. Mapear solo las propiedades que SÍ existen en tu modelo
                 usuario.IdUsuario = int.Parse(txtIdUsuario.Text);
                 usuario.Nombre = txtNombreUsuario.Text;
                 usuario.Apellido = txtApellidoUsuario.Text;
                 usuario.Email = txtEmailUsuario.Text;
                 usuario.Estado = chkEstadoUsuario.Checked;
 
-                // 3. Proyectar el resultado e invocar sus métodos de negocio
-                int prestamosActuales = 2; // Valor de prueba
-                int limitePrestamos = int.Parse(txtLimitePrestamos.Text); // El segundo valor que pide tu método
+                int prestamosActuales = 2;
+                int limitePrestamos = int.Parse(txtLimitePrestamos.Text); 
 
                 txtResultadoUsuario.Text = "=== USUARIO REGISTRADO ===" + Environment.NewLine +
                                            usuario.ToString() + Environment.NewLine +
-                                           // Aquí pasamos los dos valores (int, int) que te pide el error CS7036
                                            $"¿Puede solicitar nuevo préstamo?: {(usuario.PuedeSolicitarPrestamo(prestamosActuales, limitePrestamos) ? "SÍ" : "NO")}";
             }
             catch (ArgumentException ex)

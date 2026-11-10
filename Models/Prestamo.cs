@@ -2,7 +2,6 @@
 // VILLA Olivarez Ariel
 // NUÑEZ Martinez Marco Antonio
 // Equipo 2
-// Actividad 2.5 - Estructura lineal Stack<T> (LIFO)
 // ===============================
 using SistemaBiblioteca1.Models;
 using System;

@@ -11,11 +11,6 @@ using System.Linq;
 
 namespace SistemaBiblioteca1.Datos
 {
-    /// <summary>
-    /// Traduce cada entidad del Modelo a su tabla de MariaDB. Los modelos conservan sus listas en memoria
-    /// y, además, llaman a este repositorio al insertar, actualizar o eliminar. Al iniciar el sistema,
-    /// CargarTodo() llena esas listas con lo que ya existe en la base de datos.
-    /// </summary>
     internal static class RepositorioBD
     {
         private static MySqlParameter P(string nombre, object? valor)
@@ -23,19 +18,12 @@ namespace SistemaBiblioteca1.Datos
             return ConexionBD.P(nombre, valor);
         }
 
-        // =====================================================================
-        //  Eliminación (común a todas las entidades)
-        //  Los nombres de tabla y columna son constantes internas, nunca datos del usuario.
-        // =====================================================================
 
         public static void Eliminar(string tabla, string columnaId, int id)
         {
             ConexionBD.Ejecutar("DELETE FROM " + tabla + " WHERE " + columnaId + " = @id", P("@id", id));
         }
 
-        // =====================================================================
-        //  Administrador
-        // =====================================================================
 
         public static void Insertar(Administrador a)
         {
@@ -71,10 +59,6 @@ namespace SistemaBiblioteca1.Datos
             Administrador.CargarDesdeBD(lista);
         }
 
-        // =====================================================================
-        //  Autor
-        // =====================================================================
-
         public static void Insertar(Autor a)
         {
             ConexionBD.Ejecutar(
@@ -109,9 +93,6 @@ namespace SistemaBiblioteca1.Datos
             Autor.CargarDesdeBD(lista);
         }
 
-        // =====================================================================
-        //  Categoria
-        // =====================================================================
 
         public static void Insertar(Categoria c)
         {
@@ -145,10 +126,6 @@ namespace SistemaBiblioteca1.Datos
             Categoria.CargarDesdeBD(lista);
         }
 
-        // =====================================================================
-        //  Editorial
-        // =====================================================================
-
         public static void Insertar(Editorial e)
         {
             ConexionBD.Ejecutar(
@@ -181,9 +158,6 @@ namespace SistemaBiblioteca1.Datos
             Editorial.CargarDesdeBD(lista);
         }
 
-        // =====================================================================
-        //  Libro
-        // =====================================================================
 
         public static void Insertar(Libro l)
         {
@@ -220,9 +194,6 @@ namespace SistemaBiblioteca1.Datos
             Libro.CargarDesdeBD(lista);
         }
 
-        // =====================================================================
-        //  Ejemplar
-        // =====================================================================
 
         public static void Insertar(Ejemplar e)
         {
@@ -256,9 +227,6 @@ namespace SistemaBiblioteca1.Datos
             Ejemplar.CargarDesdeBD(lista);
         }
 
-        // =====================================================================
-        //  Usuario
-        // =====================================================================
 
         public static void Insertar(Usuario u)
         {
@@ -303,9 +271,6 @@ namespace SistemaBiblioteca1.Datos
             Usuario.CargarDesdeBD(lista);
         }
 
-        // =====================================================================
-        //  Prestamo (con su detalle de ejemplares y su historial, en una transacción)
-        // =====================================================================
 
         public static void Insertar(Prestamo p)
         {
@@ -337,7 +302,6 @@ namespace SistemaBiblioteca1.Datos
             });
         }
 
-        // El detalle y el historial se reescriben completos para que la base de datos refleje la lista y la pila actuales
         private static void GuardarDetalleEHistorial(MySqlConnection conexion, MySqlTransaction transaccion, Prestamo p)
         {
             ConexionBD.EjecutarComando(conexion, transaccion, "DELETE FROM DetallePrestamo WHERE IdPrestamo = @id", P("@id", p.Id));
@@ -355,7 +319,6 @@ namespace SistemaBiblioteca1.Datos
 
             ConexionBD.EjecutarComando(conexion, transaccion, "DELETE FROM HistorialPrestamo WHERE IdPrestamo = @id", P("@id", p.Id));
 
-            // La pila entrega primero la acción más reciente; se invierte para guardar la más antigua primero
             string[] acciones = p.HistorialCambios.ToArray();
             Array.Reverse(acciones);
             foreach (string accion in acciones)
@@ -383,7 +346,6 @@ namespace SistemaBiblioteca1.Datos
 
             Dictionary<int, Prestamo> porId = lista.ToDictionary(p => p.Id);
 
-            // Los ejemplares ya se cargaron antes, así que se enlazan los mismos objetos
             Ejemplar buscador = new Ejemplar();
             List<(int, int)> detalle = ConexionBD.Leer(
                 "SELECT IdPrestamo, IdEjemplar FROM DetallePrestamo ORDER BY IdPrestamo, IdEjemplar",
@@ -397,7 +359,6 @@ namespace SistemaBiblioteca1.Datos
                 }
             }
 
-            // Se apila de la más antigua a la más reciente para recuperar el orden original de la pila
             List<(int, string)> historial = ConexionBD.Leer(
                 "SELECT IdPrestamo, Accion FROM HistorialPrestamo ORDER BY IdHistorial",
                 r => (ConexionBD.Entero(r, 0), ConexionBD.Texto(r, 1)));
@@ -410,10 +371,6 @@ namespace SistemaBiblioteca1.Datos
             Prestamo.CargarDesdeBD(lista);
         }
 
-        // =====================================================================
-        //  Sancion
-        //  La columna Monto es calculada por MariaDB con la misma fórmula del Modelo, por eso no se inserta.
-        // =====================================================================
 
         public static void Insertar(Sancion s)
         {
@@ -456,9 +413,6 @@ namespace SistemaBiblioteca1.Datos
             Sancion.CargarDesdeBD(lista);
         }
 
-        // =====================================================================
-        //  Pago
-        // =====================================================================
 
         public static void Insertar(Pago p)
         {
@@ -493,9 +447,6 @@ namespace SistemaBiblioteca1.Datos
             Pago.CargarDesdeBD(lista);
         }
 
-        // =====================================================================
-        //  Intercambio
-        // =====================================================================
 
         public static void Insertar(Intercambio i)
         {
@@ -539,10 +490,6 @@ namespace SistemaBiblioteca1.Datos
             Intercambio.CargarDesdeBD(lista);
         }
 
-        // =====================================================================
-        //  Carga inicial
-        //  El orden respeta las dependencias: los ejemplares deben existir antes que los préstamos.
-        // =====================================================================
 
         public static void CargarTodo()
         {

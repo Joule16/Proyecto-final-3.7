@@ -43,7 +43,6 @@ namespace SistemaBiblioteca1
             Application.Run(new FrmMaestro());
         }
 
-        // Conecta con MariaDB y carga en memoria lo que ya está guardado. Devuelve false si el usuario decide salir.
         private static bool IniciarBaseDatos()
         {
             if (!ConexionBD.Inicializar(out string mensaje))
@@ -69,7 +68,6 @@ namespace SistemaBiblioteca1
             }
         }
 
-        // La cuenta de administrador se crea una sola vez: si ya existe en la base de datos, no se vuelve a crear
         private static void CrearAdministradorInicial()
         {
             int mayorId = 0;

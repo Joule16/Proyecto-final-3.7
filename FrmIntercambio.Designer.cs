@@ -1,8 +1,7 @@
-﻿// Proyecto Biblioteca - Equipo #2
+﻿//   Equipo #2
 //   SUÑIGA Maciel Joule Alexander
 //   VILLA Olivarez Ariel
 //   NUÑEZ Martinez Marco Antonio
-// ===============================
 namespace SistemaBiblioteca1
 {
     partial class FrmIntercambio

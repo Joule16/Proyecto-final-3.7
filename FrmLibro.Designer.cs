@@ -2,7 +2,6 @@
 //   SUÑIGA Maciel Joule Alexander
 //   VILLA Olivarez Ariel
 //   NUÑEZ Martinez Marco Antonio
-// ===============================
 namespace SistemaBiblioteca1
 {
     partial class FrmLibro

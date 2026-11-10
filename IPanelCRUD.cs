@@ -8,10 +8,6 @@ using System.Windows.Forms;
 
 namespace SistemaBiblioteca1
 {
-    /// <summary>
-    /// Contrato visual que deben cumplir todos los formularios heredados de FrmBase
-    /// Permite que FrmMaestro controle cualquier vista sin conocer su clase
-    /// </summary>
     public interface IPanelCRUD
     {
         void EjecutarGuardar();

@@ -99,9 +99,6 @@ namespace SistemaBiblioteca1
             Height = AltoBarra;
         }
 
-        // ---- Validación del campo de búsqueda ----
-
-        // Solo dígitos y teclas de control; cualquier otra tecla se descarta con el sonido del sistema
         private void txtBuscar_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
@@ -111,13 +108,11 @@ namespace SistemaBiblioteca1
             }
         }
 
-        // En cuanto el usuario escribe algo, se quita el aviso de error
         private void txtBuscar_TextChanged(object sender, EventArgs e)
         {
             _errores.SetError(_txtBuscar, "");
         }
 
-        // El botón Buscar no ejecuta nada si el campo está vacío o no es un número
         private void btnBuscar_Click(object sender, EventArgs e)
         {
             string id = _txtBuscar.Text.Trim();

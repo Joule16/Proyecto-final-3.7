@@ -11,29 +11,16 @@ using System.Text.Json;
 
 namespace SistemaBiblioteca1.Datos
 {
-    /// <summary>
-    /// Punto único de acceso a MariaDB. Lee la configuración de appsettings.json, abre las conexiones y
-    /// ejecuta comandos SQL siempre con parámetros (nunca concatenando datos del usuario en la consulta).
-    /// Los errores de la base de datos se convierten en InvalidOperationException con un mensaje claro,
-    /// para que los formularios los muestren con sus MessageBox sin cerrarse.
-    /// </summary>
     public static class ConexionBD
     {
         private const string ARCHIVO_CONFIGURACION = "appsettings.json";
 
         private static string cadenaConexion = string.Empty;
 
-        /// <summary>True cuando hay conexión válida; si es false el sistema trabaja solo en memoria.</summary>
         public static bool Habilitada { get; private set; }
 
-        /// <summary>Descripción legible del destino (servidor, puerto y base de datos).</summary>
         public static string Destino { get; private set; } = string.Empty;
 
-        // =====================================================================
-        //  Inicio y configuración
-        // =====================================================================
-
-        /// <summary>Lee la configuración y comprueba que MariaDB responde. Devuelve false con un mensaje si falla.</summary>
         public static bool Inicializar(out string mensaje)
         {
             Habilitada = false;
@@ -67,13 +54,11 @@ namespace SistemaBiblioteca1.Datos
             }
         }
 
-        /// <summary>Apaga la persistencia (el sistema sigue funcionando solo en memoria).</summary>
         public static void Deshabilitar()
         {
             Habilitada = false;
         }
 
-        // Lee appsettings.json (junto al ejecutable). Si falta, usa los valores típicos de un MariaDB local.
         private static string ConstruirCadenaConexion()
         {
             string servidor = "localhost";
@@ -116,7 +101,6 @@ namespace SistemaBiblioteca1.Datos
             return constructor.ConnectionString;
         }
 
-        // Acepta tanto texto como número en el JSON (por ejemplo "Puerto": 3306)
         private static string LeerTexto(JsonElement config, string nombre, string valorPorDefecto)
         {
             if (!config.TryGetProperty(nombre, out JsonElement valor))
@@ -131,22 +115,16 @@ namespace SistemaBiblioteca1.Datos
             return valorPorDefecto;
         }
 
-        // =====================================================================
-        //  Ejecución de comandos
-        // =====================================================================
-
         public static MySqlConnection CrearConexion()
         {
             return new MySqlConnection(cadenaConexion);
         }
 
-        /// <summary>Crea un parámetro SQL; un valor null se guarda como NULL.</summary>
         public static MySqlParameter P(string nombre, object? valor)
         {
             return new MySqlParameter(nombre, valor ?? DBNull.Value);
         }
 
-        /// <summary>INSERT, UPDATE o DELETE. Devuelve las filas afectadas (0 si la base de datos está deshabilitada).</summary>
         public static int Ejecutar(string sql, params MySqlParameter[] parametros)
         {
             if (!Habilitada)
@@ -166,7 +144,6 @@ namespace SistemaBiblioteca1.Datos
             }
         }
 
-        /// <summary>Ejecuta varias operaciones como una sola unidad: o se guardan todas o no se guarda ninguna.</summary>
         public static void EjecutarEnTransaccion(Action<MySqlConnection, MySqlTransaction> operaciones)
         {
             if (!Habilitada)
@@ -198,7 +175,6 @@ namespace SistemaBiblioteca1.Datos
             }
         }
 
-        /// <summary>Ejecuta un comando dentro de una conexión (y transacción) ya abiertas.</summary>
         public static int EjecutarComando(MySqlConnection conexion, MySqlTransaction? transaccion,
                                           string sql, params MySqlParameter[] parametros)
         {
@@ -209,7 +185,6 @@ namespace SistemaBiblioteca1.Datos
             }
         }
 
-        /// <summary>SELECT: recorre el resultado y convierte cada fila con la función recibida.</summary>
         public static List<T> Leer<T>(string sql, Func<MySqlDataReader, T> convertir, params MySqlParameter[] parametros)
         {
             List<T> resultado = new List<T>();
@@ -241,9 +216,6 @@ namespace SistemaBiblioteca1.Datos
             return resultado;
         }
 
-        // =====================================================================
-        //  Lectura segura de columnas (NULL se convierte en un valor neutro)
-        // =====================================================================
 
         public static string Texto(MySqlDataReader r, int i)
         {
@@ -280,9 +252,6 @@ namespace SistemaBiblioteca1.Datos
             return r.IsDBNull(i) ? (DateTime?)null : r.GetDateTime(i);
         }
 
-        // =====================================================================
-        //  Mensajes de error comprensibles
-        // =====================================================================
 
         public static string TraducirError(MySqlException ex)
         {
@@ -312,7 +281,6 @@ namespace SistemaBiblioteca1.Datos
             }
         }
 
-        // Indica qué dato se repitió según el nombre de la restricción UNIQUE
         private static string DescribirValorUnico(string mensaje)
         {
             if (mensaje.Contains("UQ_Usuario_Email")) return "ese correo electrónico";

@@ -2,7 +2,6 @@
 //   NUÑEZ Martinez Marco Antonio
 //   SUÑIGA Maciel Joule Alexander
 //   VILLA Olivarez Ariel
-// ===============================
 using SistemaBiblioteca1.Datos;
 using System;
 using System.Drawing;

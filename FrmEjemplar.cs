@@ -94,7 +94,6 @@ namespace SistemaBiblioteca1
 
         public void EjecutarEliminar(StatusStrip barraEstado)
         {
-            // Validación: el ID es obligatorio antes de intentar eliminar
             if (!ValidarIdObligatorio())
             {
                 MostrarEstado(barraEstado, "Escribe o busca el ID del registro que deseas eliminar.");
